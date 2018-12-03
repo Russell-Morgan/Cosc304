@@ -259,7 +259,7 @@ pstmt = con.prepareStatement(sql3);
 rst = pstmt.executeQuery();
 rst.next();
 int AID= rst.getInt(1)+1;
-//try{
+try{
 	if(request.getParameter("ArticleTitle")!=null){
 	String ArticleTitle = request.getParameter("ArticleTitle");
 	String Genre = request.getParameter("Genre");
@@ -284,14 +284,14 @@ int AID= rst.getInt(1)+1;
 	pstmt.setDate(4, sqlDate);
 	pstmt.executeUpdate();
 	}
-//}
-//catch(Exception e){
+}
+catch(Exception e){
 	
 	SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd");
 	String Date = simpleDateFormat.format(new Date());
 	out.println("Check Inputs for Title, Genre, Price and Article");
 			out.println(Date);
-//}
+}
 
 %>
   

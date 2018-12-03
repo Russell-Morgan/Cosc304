@@ -185,7 +185,7 @@ purchasedSet.close();
 	
 	//creating checkout table
 	out.println("<table>");
-	out.println("<tr><th>Article #</th><th>Title</th><th>Target</th><th>Price</th></tr>");
+	out.println("<tr><th>Article #</th><th>Title</th><th>Target</th><th>Price</th><th>Remove</th></tr>");
 	//creating each row of the table, and creating sum of prices.
 	double totalPrice = 0;
 	pstmt = con.prepareStatement(command);
@@ -203,8 +203,8 @@ purchasedSet.close();
 		totalPrice += aPrice;
 		
 		
-		out.println("<tr><td>"+aId+"</td><td>"+aTitle+"</td><td>"+tFName+" "+tLName+"</td><td>"+pPrice+"</td></tr>");
-		
+		out.println("<tr><td>"+aId+"</td><td>"+aTitle+"</td><td>"+tFName+" "+tLName+"</td><td>"+pPrice+"</td><td><a href = \"RemoveFromCart.jsp?AID="+Integer.toString(aId)+"\">Remove</a> </td></tr>");
+
 	}
 	String fPrice = currFormat.format(totalPrice);
 	out.println("<tr><th colspan='3'>Total: </th><th colspan='1'>"+fPrice+"</th></tr>");

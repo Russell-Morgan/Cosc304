@@ -119,6 +119,15 @@ rst = pstmt.executeQuery();
 if(rst.next()==true)out.print("<a href=\"WriteArticle.jsp\">Write An Article</a>");
 out.print("<a href=\"PurchasedArticles.jsp\">Purchased Articles</a>");
 out.print("<a href=\"checkout.jsp\">CheckOut</a>");
+SQL = "select * From ArtOrder where CartID = ?";
+pstmt=con.prepareStatement(SQL);
+pstmt.setInt(1,Integer.parseInt(session.getAttribute("UserId").toString()));
+rst =pstmt.executeQuery();
+int totalincart=0;
+while(rst.next()){
+	totalincart++;
+}
+out.print("<a href =\"checkout.jsp\">Total Items In Cart: "+totalincart+"</a>");
 out.print("<a href =\"Logout.jsp\">Logout</a>");
 }
 
@@ -131,6 +140,21 @@ out.print("<a href =\"Logout.jsp\">Logout</a>");
       <input type="text" placeholder="Search Articles..." name="title" cols = "50">
       <button type="submit">Search</button>
     </form>
+    <%
+    if(session.getAttribute("UserId")!= null){
+    String SQL = "Select IsAdmin from Account where UserID = ?";
+    PreparedStatement pstmt = con.prepareStatement(SQL);
+    
+    pstmt.setInt(1,Integer.parseInt(session.getAttribute("UserId").toString()));
+    ResultSet rst = pstmt.executeQuery();
+    rst.next();
+    if(rst.getInt(1)==1){
+    	out.println("<a href=\"AdminPage.jsp\">Admin</a>");
+    }
+    }
+    //<a href="AdminPage.jsp">Admin</a> 
+    %>
+   
 </div>
 <!--Image hosted on a image hosting website. May not be the best but it worked easier than trying to get it from file -->
 <table>

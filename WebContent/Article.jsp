@@ -115,14 +115,16 @@ out.print("<a href =\"Logout.jsp\">Logout</a>");
 </div>
 <!--Image hosted on a image hosting website. May not be the best but it worked easier than trying to get it from file -->
 <%
-int UserID = Integer.parseInt((session.getAttribute("UserId").toString()));
 String sql = "Select ArticleTitle, Theme, UserID, Articles.CID, OwnerID,Candidate.FirstName, Candidate.LastName,ArticleID, text From Articles JOIN Candidate ON Articles.CID = Candidate.CID where ArticleID = ?";
 PreparedStatement pstmt = con.prepareStatement(sql);
 String ID = request.getParameter("ArticleID");
 pstmt.setString(1, ID);
 ResultSet rst = pstmt.executeQuery();
 rst.next();
+int AuthorID = rst.getInt(3);
 int OwnerID = rst.getInt(5);
+try{
+int UserID = Integer.parseInt((session.getAttribute("UserId").toString()));
 if (UserID==OwnerID){
 out.println("<h1 align=\"center\">"+rst.getString(1)+"</h1>");
 out.println("<p>"+rst.getString(9)+"</p>");
@@ -141,6 +143,28 @@ else{
 	out.println("Purchase This Article to See the Entire Thing!");
 	out.println("<a href=\"FrontPage.jsp\"=>Back To Home Page</a>");
 }
+}
+catch(Exception e){
+	String Title = rst.getString(1);
+	String ArticleReduced = rst.getString(9);
+	if(ArticleReduced.length()>100)
+	ArticleReduced = ArticleReduced.substring(0, 50);
+	ArticleReduced = ArticleReduced + "...";
+	out.println("<h1 align=\"center\">"+Title+"</h1>");
+	out.println("<p>"+ArticleReduced+"</p>");
+	out.println("Purchase This Article to See the Entire Thing!");
+	out.println("<a href=\"FrontPage.jsp\"=>Back To Home Page</a>");
+}
+String sql2 = "select UserName From Account where UserID = ?";
+pstmt = con.prepareStatement(sql2);
+pstmt.setInt(1,AuthorID);
+ResultSet rst2 = pstmt.executeQuery();
+rst2.next();
+out.println("<p>Article Written by: "+rst2.getString(1)+"</p>");
+
+out.println("<p>Genre: "+rst.getString(2)+"</p>");
+
+out.println("<p>target: "+rst.getString(6)+" "+rst.getString(7)+"</p>");
 %>
 <h1 align="center"></h1>
 <script>
