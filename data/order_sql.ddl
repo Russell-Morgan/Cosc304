@@ -2,12 +2,9 @@
 DROP TABLE Articles;
 DROP TABLE Candidate;
 DROP TABLE PoliticalParty;
-DROP TABLE Shipment;
-DROP TABLE MemOrder;
 DROP TABLE ArtOrder;
 DROP TABLE Author;
 DROP TABLE Cart;
-DROP TABLE Memorabilia;
 
 
 DROP TABLE Account;
@@ -34,26 +31,6 @@ CONSTRAINT FK_CART_Account FOREIGN KEY(UserID) References Account(UserId)
 							ON DELETE NO ACTION
 );
 
-CREATE TABLE Shipment(
-	ShipmentID INT,
-	ShipmentDate date,
-	Weight float,
-	Height float,
-	Length float,
-	Width  float,
-	TrackingNum INT,
-	CartID INT,
-	UserID INT,
-	Shipped BIT,
-	PRIMARY KEY(ShipmentID),
-	CONSTRAINT FK_Shipment_Cart FOREIGN KEY(CartID) REFERENCES Cart(CartID)
-								ON DELETE NO ACTION
-								ON UPDATE NO ACTION,
-	CONSTRAINT FK_Shipment_Account FOREIGN KEY (UserID) REFERENCES Account(UserID)
-								ON DELETE NO ACTION
-								ON UPDATE NO ACTION
-);
-
 CREATE TABLE Author(
 	UserID INT,
 	Earnings DECIMAL(9,2),
@@ -63,24 +40,6 @@ CREATE TABLE Author(
 								ON UPDATE NO ACTION
 );
 
-CREATE TABLE Memorabilia(
-	DesignID INT,
-	Memorabilia VARCHAR(15) CHECK( Memorabilia in('˜T-Shirt', 'Hat', 'Button', 'BumperSticker')) Not Null,
-	PartyLogo VARCHAR(20) CHECK(PartyLogo in('Conservative', 'Liberal', 'NDP', 'Green')),
-	SalesCount INT,
-	Rating INT,
-	PRIMARY KEY(DesignID)
-);
-
-CREATE TABLE MemOrder(
-	DesignID int,
-	CartID int,
-	Price DECIMAL(6,2),
-	PRIMARY KEY(DesignID, CartID),
-	CONSTRAINT FK_MemOrder_Cart FOREIGN KEY(CartID) References Cart(CartID)
-								ON DELETE NO ACTION 
-								ON UPDATE NO ACTION
-);
 
 CREATE TABLE ArtOrder(
 ArticleID int,
@@ -129,7 +88,10 @@ CREATE TABLE Articles(
 						      	  ON UPDATE NO ACTION,
  	CONSTRAINT FK_Articles_Candidate FOREIGN KEY (CID) REFERENCES Candidate(CID) 
  								  	 ON DELETE NO ACTION 
- 									 ON UPDATE NO ACTION
+ 									 ON UPDATE NO ACTION,
+ 	CONSTRAINT FK_Articles_Account FOREIGN KEY (OwnerID) REFERENCES Account(UserID)
+ 									ON DELETE NO ACTION
+ 									ON UPDATE NO ACTION
  );
  
 
@@ -137,6 +99,7 @@ CREATE TABLE Articles(
  INSERT INTO Account VALUES (1, 'DandyMatt', 'DandyCandy', 'Matthew', 'Locklee', '777 Hahaha Street', 'dandy.matt@live.com', 24, 1);
  INSERT INTO Account VALUES (2, 'Mattew', 'pikachu', 'Matt', 'NumberTwo', '666 wastreet', 'dandy.candy@fakeemail.com', 30, 0);
  INSERT INTO Account VALUES (3, '420potxJointMan', 'Lul', 'Jose', 'Noway', '123 toomany addreses street', 'ugh@ugh.com', 100, 0);
+  INSERT INTO Account VALUES (4, 'admin', 'admin', 'Admin', 'Admin', '123 toomany addreses street', 'admin@admin.com', 100, 1);
  
  INSERT INTO Author VALUES (1,1);
  INSERT INTO Author VALUES (2, 0.25);
@@ -145,13 +108,12 @@ CREATE TABLE Articles(
  INSERT INTO Cart VALUES (1, 1);
  INSERT INTO Cart VALUES (2, 2);
  INSERT INTO Cart VALUES (3, 3);
+ INSERT INTO Cart VALUES (4,4);
  
  INSERT INTO ArtOrder VALUES(1,1,5);
  INSERT INTO ArtOrder VALUES(2,2,5);
  INSERT INTO ArtOrder VALUES(3,3,5);
 
- 
- INSERT INTO Shipment VALUES (1, '2018-11-26',1.00, 1.00, 1.00, 1.00, 90210, 1, 1, 1);
  
 INSERT INTO PoliticalParty VALUES ('Green Party');
 INSERT INTO PoliticalParty VALUES ('Republican Party');
@@ -167,13 +129,13 @@ INSERT INTO Candidate VALUES (3, '555 Yellow Brick Rd', 'Councilor', 'Carla', 'M
 
  INSERT INTO Articles VALUES (1,2, 0, 'Russell Is left handed, GROSS','At a young age, he was hated
  among his peers, because of his challenge. He is left handed. :(', 'Horror', '2018-11-29',5, 0, 0, 1, null );
- INSERT INTO Articles VALUES (2,2, 0, 'Russell Was a Bully in highschool','testtesttest', 'Psychological', '2018-11-28',5, 0, 0, 1,3 );
- INSERT INTO Articles VALUES (3,3, 0, 'Matthew Is Exhausted','testetestestests', 'Truth', '2018-11-27',5, 0, 0, 3,1 );
- INSERT INTO Articles VALUES (6,3, 0, 'Article 2','testetestestests', 'Truth', '2018-11-26',5, 0, 0, 2,1 );
- INSERT INTO Articles VALUES (7,1, 0, 'Article 3','testetestestests', 'Truth', '2018-11-25',5, 0, 0, 3,1 );
- INSERT INTO Articles VALUES (8,3, 0, 'Article 4','testetestestests', 'Truth', '2018-11-24',5, 0, 0, 2,1 );
- INSERT INTO Articles VALUES (9,1, 0, 'Article 5','testetestestests', 'Truth', '2018-11-23',5, 0, 0, 2,1 );
- INSERT INTO Articles VALUES (10,2, 0, 'Article 6','testetestestests', 'Truth', '2018-11-22',5, 0, 0, 1,1 );
- INSERT INTO Articles VALUES (4,2, 0, 'Makes COSC 304 Designed To','testetestestsetestsetests', 'Drama', '2018-11-21',5, 0, 0, 3,2 );
- INSERT INTO Articles VALUES (5,3, 0, 'Carla Said WHAT?!','tesssssssssssssstttt', 'Horror', '2018-11-20',5, 0, 0, 2,2 );
+ INSERT INTO Articles VALUES (2,2, 0, 'Russell Was a Bully in highschool','testtesttest', 'Psychological', '2018-11-28',5, 1, 0, 1,3 );
+ INSERT INTO Articles VALUES (3,3, 0, 'Matthew Is Exhausted','testetestestests', 'Truth', '2018-11-27',5, 1, 0, 3,1 );
+ INSERT INTO Articles VALUES (6,3, 0, 'Article 2','testetestestests', 'Truth', '2018-11-26',5, 0, 0, 2,null );
+ INSERT INTO Articles VALUES (7,1, 0, 'Article 3','testetestestests', 'Truth', '2018-11-25',5, 0, 0, 3,null );
+ INSERT INTO Articles VALUES (8,3, 0, 'Article 4','testetestestests', 'Truth', '2018-11-24',5, 0, 0, 2,null );
+ INSERT INTO Articles VALUES (9,1, 0, 'Article 5','testetestestests', 'Truth', '2018-11-23',5, 0, 0, 2,null );
+ INSERT INTO Articles VALUES (10,2, 0, 'Article 6','testetestestests', 'Truth', '2018-11-22',5, 0, 0, 1,null );
+ INSERT INTO Articles VALUES (4,2, 0, 'Makes COSC 304 Designed To','testetestestsetestsetests', 'Drama', '2018-11-21',5, 1, 0, 3,2 );
+ INSERT INTO Articles VALUES (5,3, 0, 'Carla Said WHAT?!','tesssssssssssssstttt', 'Horror', '2018-11-20',5, 1, 0, 2,2 );
 
